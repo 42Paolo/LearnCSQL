@@ -16,15 +16,14 @@ int insert_user(sqlite3 *db, char *username, char *psw)
         fprintf(stderr, "ERROR PREPARING QUERY: %s\n", sqlite3_errmsg(db));
         return rc;
     }
-
     printf("QUERY PREPARED CORRECTLY\n");
-
-    sqlite3_bind_text(stmt, 1, username, -1, SQLITE_TRANSIENT);
+    
+	sqlite3_bind_text(stmt, 1, username, -1, SQLITE_TRANSIENT);
     sqlite3_bind_text(stmt, 2, psw, -1, SQLITE_TRANSIENT);
 
     rc = sqlite3_step(stmt);
     if (rc != SQLITE_DONE) {
-        fprintf(stderr, "ERROR STEP QUERY: %s\n", sqlite3_errmsg(db));
+        fprintf(stderr, "ERROR EXECUTING QUERY: %s\n", sqlite3_errmsg(db));
         sqlite3_finalize(stmt);
         return rc;
     }
@@ -63,7 +62,13 @@ int main(void)
 		sqlite3_close(handle_db);
 		return (rc);
 	}
-	fprintf(stdout, "TABLE CREATED CORRECTLY");
-	sql_cmnd = ""
+	fprintf(stdout, "TABLE CREATED CORRECTLY\n");
+	if((rc = insert_user(handle_db, "paolo", "prova")) != SQLITE_OK)
+	{
+		fprintf(stderr, "ERROR INSERTING DATAS: %s\n", sqlite3_errmsg(handle_db));
+		sqlite3_close(handle_db);
+		return rc;
+	}
+	fprintf(stdout, "DATA INSERT CORRECTLY\n");
 	return 0;
 }
